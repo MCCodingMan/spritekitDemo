@@ -42,6 +42,9 @@
     [self initPlanNode];
 }
 
+/**
+ 初始化设置
+ */
 - (void)initSomeSetting {
     self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
     self.physicsBody.categoryBitMask = SKPhysicsBodyBackGround;
@@ -64,6 +67,9 @@
                                              [SKAction colorizeWithColorBlendFactor:0 duration:0.1]]]];
 }
 
+/**
+ 初始化用户Node
+ */
 - (void)initPlanNode {
     userNode = [UserSpriteNode spriteNodeWithTexture:[SKTexture textureWithImage:[UIImage imageNamed:@"Air"]] size:CGSizeMake(50, 50)];
     userNode.position = self.view.center;
@@ -81,6 +87,9 @@
     isFir = YES;
 }
 
+/**
+ 初始化背景Node
+ */
 - (void)initBackGroundNode {
     backNode1 = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImage:[UIImage imageNamed:@"bg1"]]];
     backNode1.size = CGSizeMake(self.size.width, self.size.height + 100);
@@ -94,6 +103,12 @@
     [self addChild:backNode2];
 }
 
+/**
+ 双击确认攻击点
+
+ @param touches 1
+ @param event 1
+ */
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint clickPoint = [touch locationInView:[touch view]];
@@ -104,6 +119,12 @@
     }
 }
 
+/**
+ 飞机移动
+
+ @param touches 1
+ @param event 1
+ */
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint clickPoint = [touch locationInView:[touch view]];
@@ -124,6 +145,11 @@
     [userNode runAction:moveAction];
 }
 
+/**
+ 帧动画
+
+ @param currentTime 当前时间
+ */
 - (void)update:(NSTimeInterval)currentTime {
     [self updateBackGroundNode:currentTime];
     [self generateEnemys];
@@ -135,6 +161,9 @@
     }
 }
 
+/**
+ 判断子弹type和威力
+ */
 - (void)jugeBulletNumAndType {
     static int generateBulletTime = 0;
     generateBulletTime++;
@@ -173,6 +202,9 @@
     
 }
 
+/**
+ 跟踪敌机
+ */
 - (void)followEnemy {
     if (enemys.count > 0) {
         int enemyIndex = rand() % enemys.count;
@@ -201,6 +233,11 @@
     }
 }
 
+/**
+ 背景轮播
+
+ @param currentTime 当前时间
+ */
 - (void)updateBackGroundNode:(NSTimeInterval)currentTime {
     if (backNode1.position.y < self.view.center.y - (self.size.height + 100)) {
         backNode1.position = CGPointMake(backNode1.position.x, backNode2.position.y + self.size.height + 100);
@@ -212,6 +249,9 @@
     backNode2.position = CGPointMake(backNode2.position.x, backNode2.position.y - currentTime * 0.00001);
 }
 
+/**
+ 生成敌机
+ */
 - (void)generateEnemys {
     static int generateTime = 0;
     generateTime++;
@@ -221,6 +261,9 @@
     }
 }
 
+/**
+ 初始化敌机
+ */
 - (void)initEnemy {
     static float HP = 80;
     HP = HP + 0.1;
@@ -255,6 +298,11 @@
     }];
 }
 
+/**
+ 碰撞检测
+
+ @param contact 碰撞
+ */
 - (void)didBeginContact:(SKPhysicsContact *)contact {
     if (contact.bodyA.categoryBitMask == SKPhysicsBodyEnemy && (contact.bodyB.categoryBitMask == SKPhysicsBodyFlower || contact.bodyB.categoryBitMask == SKPhysicsBodyFlower1)) {
         EnemySpriteNode *enemyNode = (EnemySpriteNode *)contact.bodyA.node;
@@ -335,6 +383,12 @@
     }
 }
 
+/**
+ 子弹碰撞敌机
+
+ @param bulletNode 子弹
+ @param enemyNode 敌机
+ */
 - (void)BulletContactEnemy:(UserBulletSpriteNode *)bulletNode enemy:(EnemySpriteNode *)enemyNode {
     SKEmitterNode *enemyBomEmitter = [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"enemyBoom" ofType:@"sks"]];
     if (bulletNode.bulletType == SKBulletTypeMini || bulletNode.bulletType == SKBulletTypeTracking) {
@@ -382,6 +436,13 @@
     
 }
 
+/**
+ 转向
+
+ @param nodePoint 当前位置
+ @param movePoint 移动到的位置
+ @return 角度
+ */
 - (float)nodeMoveRotate:(CGPoint)nodePoint movePoint:(CGPoint)movePoint {
     const float dx = movePoint.x - nodePoint.x;
     const float dy = movePoint.y - nodePoint.y;
@@ -398,6 +459,11 @@
 
 #pragma mark --生成子弹--
 
+/**
+ 生成子弹
+
+ @param bulletNum 威力
+ */
 - (void)generateBulletMini:(int)bulletNum {
     if (bulletNum == 1) {
         [self createMiniNode:CGFLOAT_MAX cycle:0 endPont:0];
@@ -425,6 +491,13 @@
     }
 }
 
+/**
+ 创建mini子弹
+
+ @param denominator 位置比例
+ @param cycle 当前管道位置
+ @param endPointX 到达点
+ */
 - (void)createMiniNode:(float)denominator cycle:(int)cycle endPont:(float)endPointX {
     UserBulletSpriteNode *bulletNode = [UserBulletSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"spark"] size:CGSizeMake(15, 15)];
     bulletNode.position = userNode.position;
@@ -449,6 +522,11 @@
     }];
 }
 
+/**
+ 创建跟踪弹
+
+ @param bulletNum 威力
+ */
 - (void)generateBulletTracking:(int)bulletNum {
     if (bulletNum == 1) {
         UserBulletSpriteNode *userBullet = [UserBulletSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"弧1"] size:CGSizeMake(40, 40)];
@@ -586,6 +664,11 @@
     
 }
 
+/**
+ 生成导弹
+
+ @param bulletNum 导弹威力
+ */
 - (void)generateBulletMissile:(int)bulletNum {
     if (bulletNum == 1) {
         UserBulletSpriteNode *bulletNode = [UserBulletSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"火箭"] size:CGSizeMake(20, 40)];
@@ -628,6 +711,12 @@
     }
 }
 
+/**
+ 创建导弹
+
+ @param denominator 位置比例
+ @param cycle 当前管道位置
+ */
 - (void)createBulletMissile:(float)denominator cycle:(int)cycle {
     UserBulletSpriteNode *bulletNode = [UserBulletSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"火箭"] size:CGSizeMake(20, 40)];
     bulletNode.position = userNode.position;
