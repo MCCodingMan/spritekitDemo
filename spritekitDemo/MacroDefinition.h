@@ -9,6 +9,9 @@
 #ifndef MacroDefinition_h
 #define MacroDefinition_h
 
+#define SCREEN_WIDTH  [UIScreen mainScreen].bounds.size.width
+#define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
+
 typedef enum{
     SKPhysicsBodyEnemy        = 0x1<<1,
     SKPhysicsBodyEnemyBullets = 0x1<<2,
